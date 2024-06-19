@@ -1,0 +1,5 @@
+fastapi
+yandex_music
+lastfm-py
+uvicorn
+aiohttp
