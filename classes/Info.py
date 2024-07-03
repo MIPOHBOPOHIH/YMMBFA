@@ -18,11 +18,7 @@ class Info:
 
     @staticmethod
     async def get_download_link(data) -> str:
-        try:
-            return (await data.get_download_info_async(get_direct_links=True))[0].direct_link
-        except Exception as e:
-            raise HTTPException(status_code=500,
-                                detail="Failed to fetch download link") from e
+        return (await data.get_download_info_async(get_direct_links=True))[0].direct_link
 
     @staticmethod
     async def get_artists(data) -> str:
@@ -130,16 +126,16 @@ class Info:
             raise HTTPException(status_code=500,
                                 detail="Failed to search") from e
 
-    async def getTrackFromStation(self):  # создание случайного радио и брать трек оттуда
-        _stations = await self.client.rotor_stations_list()
-        _station_random_index = floor(len(_stations) * random())
-        _station = _stations[_station_random_index].station
-        _station_id = f'{_station.id.type}:{_station.id.tag}'
-        _station_from = _station.id_for_from
-        track = await self.radio.start_radio(_station_id, _station_from)
+    async def get_track_from_station(self):  # создание случайного радио и брать трек оттуда
+        stations = await self.client.rotor_stations_list()
+        station_random_index = floor(len(stations) * random())
+        station = stations[station_random_index].station
+        station_id = f'{station.id.type}:{station.id.tag}'
+        station_from = station.id_for_from
+        track = await self.radio.start_radio(station_id, station_from)
         return await self.get_track_info(track)
 
-    async def getNewReleases(self, skip, count):
+    async def get_new_releases(self, skip, count):
         new_releases = (await self.client.new_releases()).to_dict()
         new_releases = new_releases['new_releases']
         new_releases = new_releases[skip:]
@@ -210,7 +206,7 @@ class Info:
             raise HTTPException(status_code=500,
                                 detail="Failed to like album") from e
 
-    async def get_like_tracks_by_username(self, username, skip, count):
+    async def get_like_tracks_by_username(self, username, skip, count):  # TODO: Сделать функцию get_playlist_info
         playlist = await self.client.users_likes_tracks(username)
         playlist = await playlist.fetch_tracks_async()
         total = len(playlist)
