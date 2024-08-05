@@ -114,13 +114,12 @@ class Info:
                 best = await self.get_track_info(searching_data['best']['result'])
             elif searching_data['best']['type'] == 'album':
                 best = await self.get_album_info(searching_data['best']['result'])
-            tracks = []
             track_search = await self.client.search(type_='track', text=request)
-            track_tasks = [self.get_track_by_id(track['id']) for track in track_search['tracks']['results']]
+            track_tasks = [(await self.get_track_by_id(track['id'])) for track in track_search['tracks']['results']]
             return {
                 'type': searching_data['best']['type'],
                 'best': best,
-                'tracks': tracks
+                'tracks': track_tasks
             }
         except Exception as e:
             raise HTTPException(status_code=500,
