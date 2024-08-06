@@ -115,7 +115,7 @@ class Info:
             elif searching_data['best']['type'] == 'album':
                 best = await self.get_album_info(searching_data['best']['result'])
             track_search = await self.client.search(type_='track', text=request)
-            track_tasks = [(await self.get_track_by_id(track['id'])) for track in track_search['tracks']['results']]
+            track_tasks = [(await self.get_track_info(track)) for track in track_search['tracks']['results']]
             return {
                 'type': searching_data['best']['type'],
                 'best': best,
